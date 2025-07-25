@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiements & SWIFT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>ImportFlow</h2>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="documents.html">Documents Importés</a></li>
+                <li><a href="expeditions.html">Suivi des Expéditions</a></li>
+                <li><a href="paiements.html">Paiements & SWIFT</a></li>
+                <li><a href="couts-calculs.html">Coûts & Calculs</a></li>
+                <li><a href="produits-importes.html">Produits Importés</a></li>
+                <li><a href="alertes-notifications.html">Alertes & Notifications</a></li>
+                <li><a href="echeancier.html">Échéancier</a></li>
+                <li><a href="statistiques-kpis.html">Statistiques & KPIs</a></li>
+                <li><a href="parametres-import.html">Paramètres Import</a></li>
+            </ul>
+        </aside>
+        <section class="stats">
+            <h2>Statistiques & KPIs</h2>
+            <div>
+                <canvas id="kpiChart"></canvas>
+                <div class="kpi">
+                    <div class="kpi-title">Dossiers Actifs</div>
+                    <div class="kpi-value">24</div>
+                    <span class="kpi-trend positive">▲ +12%</span>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-title">Expéditions en Transit</div>
+                    <div class="kpi-value">8</div>
+                    <span class="kpi-trend negative">▼ -5%</span>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-title">Paiements en Attente</div>
+                    <div class="kpi-value">€45,230</div>
+                    <span class="kpi-trend positive">▲ +8%</span>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-title">Produits Importés</div>
+                    <div class="kpi-value">1,247</div>
+                    <span class="kpi-trend positive">▲ +18%</span>
+                </div>
+            </div>
+        </section>
+        <script>
+            const ctx2 = document.getElementById('kpiChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Livrés', 'En Transit', 'Retard'],
+                    datasets: [{
+                        label: 'Statut des expéditions',
+                        data: [65, 25, 10],
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        </script>

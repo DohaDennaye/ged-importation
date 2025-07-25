@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiements & SWIFT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>ImportFlow</h2>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="documents.html">Documents Importés</a></li>
+                <li><a href="expeditions.html">Suivi des Expéditions</a></li>
+                <li><a href="paiements.html">Paiements & SWIFT</a></li>
+                <li><a href="couts-calculs.html">Coûts & Calculs</a></li>
+                <li><a href="produits-importes.html">Produits Importés</a></li>
+                <li><a href="alertes-notifications.html">Alertes & Notifications</a></li>
+                <li><a href="echeancier.html">Échéancier</a></li>
+                <li><a href="statistiques-kpis.html">Statistiques & KPIs</a></li>
+                <li><a href="parametres-import.html">Paramètres Import</a></li>
+            </ul>
+        </aside>
+        <section class="alerts">
+            <h2><i class="fas fa-bell"></i> Alertes & Notifications</h2>
+            <p>Centre de gestion des alertes et notifications système</p>
+            <input type="text" id="search" placeholder="Rechercher par dossier ou description...">
+            <select id="filterType">
+                <option value="all">Tous les types</option>
+                <option value="Document manquant">Document manquant</option>
+                <option value="Paiement en retard">Paiement en retard</option>
+                <option value="Livraison en attente">Livraison en attente</option>
+            </select>
+
+            <table id="alertsTable">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Dossier</th>
+                        <th>Description</th>
+                        <th>Priorité</th>
+                        <th>Échéance</th>
+                        <th>Créée le</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les lignes seront ajoutées ici dynamiquement -->
+                </tbody>
+            </table>
+
+            <script>
+                const alertes = [
+                    {
+                        id: 1,
+                        type: "Document manquant",
+                        dossier: "IMP-2024-001",
+                        description: "Certificat d'origine manquant pour le dédouanement",
+                        priorite: "Urgent",
+                        echeance: "2024-01-18",
+                        creeLe: "2024-01-15",
+                        statut: "Non traité",
+                    },
+                    {
+                        id: 2,
+                        type: "Paiement en retard",
+                        dossier: "IMP-2024-002",
+                        description: "Paiement fournisseur ABC Corp en retard de 5 jours",
+                        priorite: "Élevé",
+                        echeance: "2024-01-20",
+                        creeLe: "2024-01-14",
+                        statut: "En cours",
+                    },
+                    {
+                        id: 3,
+                        type: "Livraison en attente",
+                        dossier: "IMP-2024-003",
+                        description: "Conteneur arrivé au port, en attente de dédouanement",
+                        priorite: "Moyen",
+                        echeance: "2024-01-22",
+                        creeLe: "2024-01-16",
+                        statut: "Non traité",
+                    },
+                ];
+
+                function displayAlertes(list) {
+                    const tbody = document.querySelector("#alertsTable tbody");
+                    tbody.innerHTML = "";
+                    list.forEach((alerte) => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+          <td>${alerte.type}</td>
+          <td>${alerte.dossier}</td>
+          <td>${alerte.description}</td>
+          <td>${alerte.priorite}</td>
+          <td>${alerte.echeance}</td>
+          <td>${alerte.creeLe}</td>
+          <td>${alerte.statut}</td>
+          <td>
+            <button onclick="traiterAlerte(${alerte.id})">Traiter</button>
+            <button onclick="assignerAlerte(${alerte.id})">Assigner</button>
+          </td>
+        `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                function filtrerAlertes() {
+                    const search = document.getElementById("search").value.toLowerCase();
+                    const filterType = document.getElementById("filterType").value;
+
+                    const result = alertes.filter((alerte) => {
+                        const matchSearch =
+                            alerte.dossier.toLowerCase().includes(search) ||
+                            alerte.description.toLowerCase().includes(search);
+                        const matchType = filterType === "all" || alerte.type === filterType;
+                        return matchSearch && matchType;
+                    });
+
+                    displayAlertes(result);
+                }
+
+                function traiterAlerte(id) {
+                    alert("Traiter alerte ID: " + id);
+                }
+
+                function assignerAlerte(id) {
+                    alert("Assigner alerte ID: " + id);
+                }
+
+                document.getElementById("search").addEventListener("input", filtrerAlertes);
+                document.getElementById("filterType").addEventListener("change", filtrerAlertes);
+
+                displayAlertes(alertes);
+            </script>
+</body>
+
+</html>

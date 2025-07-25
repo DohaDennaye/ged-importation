@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Importation</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="script.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button id="toggleSidebar" class="menu-button">☰</button>
+                <h2><i class="fa-solid fa-truck"></i><br>Logistique</h2>
+                <p><strong><i data-lucide="user"></i> Utilisateur</strong><br> <span id="clock"
+                        style="margin-left: 10px; font-weight: bold;"></span></p>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="#"><i data-lucide="home"></i>&nbsp; Tableau de bord</a></li>
+                        <li><a href="documents.html"> <i data-lucide="folder-open"></i>Documents Importés</a></li>
+                        <li><a href="expeditions.html"><i data-lucide="truck"></i>&nbsp; Suivi des Expéditions</a></li>
+                        <li><a href="paiements.html"> <i data-lucide="credit-card"></i>Paiements & SWIFT</a></li>
+                        <li><a href="couts-calculs.html"><i data-lucide="calculator"></i>Coûts & Calculs</a></li>
+                        <li><a href="produits-importes.html"><i data-lucide="package"></i>Produits Importés</a></li>
+                        <li><a href="alertes-notifications.html"><i data-lucide="bell"></i>Alertes & Notifications</a>
+                        </li>
+                        <li><a href="echeancier.html"><i data-lucide="calendar-days"></i>Échéancier</a></li>
+                        <li><a href="statistiques-kpis.html"><i data-lucide="bar-chart-3"></i>Statistiques & KPIs</a>
+                        </li>
+                        <li><a href="parametres-import.html"> <i data-lucide="settings"></i>Paramètres Import</a></li>
+                        <li><a href="planing.html"><i data-lucide="calendar-check"></i> Planification</a></li>
+                        <li><a href="templates.html"><i data-lucide="files"></i> Modèles</a></li>
+                        <li><a href="#"><i data-lucide="navigation"></i> Itinéraires</a></li>
+                        <li><a href="#"><i data-lucide="bus-front"></i> Unités</a></li>
+                        <li><a href="#"><i data-lucide="activity"></i> Rapports</a></li>
+                        <li><a href="#"><i data-lucide="messages-square"></i> Discussion</a></li>
+                        <li><a href="#"><i data-lucide="bell-ring"></i> Notifications</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <main class="dashboard">
+            <header class="main-header">
+                <h1 style="align-items: center;">Système de Gestion d'Importation</h1>
+            </header>
+
+            <section class="kpi-section">
+                <div class="kpi" href="#"><i data-lucide="folder-open"></i>&nbsp; Dossiers Actifs<br><strong>24</strong>
+                </div>
+                <div class="kpi" href="expeditions.html"><i data-lucide="truck"></i>&nbsp; Expéditions en
+                    Transit<br><strong>8</strong></div>
+                <div class="kpi" href="paiements.html"> <i data-lucide="credit-card"></i>&nbsp; Paiements en
+                    Attente<br><strong>€45,230</strong></div>
+                <div class="kpi" href="produits-importes.html"><i data-lucide="package"></i>&nbsp; Produits
+                    Importés<br><strong>1,247</strong></div>
+            </section>
+            <section class="dashboard-row">
+
+                <div class="alerts">
+                    <h2>Alertes Récentes</h2>
+                    <ul>
+                        <li class="alert-item danger">📄 Document manquant pour dossier IMP-2024-001</li>
+                        <li class="alert-item warning">💰 Paiement confirmé pour fournisseur ABC Corp</li>
+                        <li class="alert-item info">🚚 Retard livraison conteneur CONT-789</li>
+                    </ul>
+                </div>
+
+                <section class="actions-box">
+                    <h2>Actions Rapides</h2>
+                    <div class="actions">
+                        <button>Nouveau Dossier</button>
+                        <button>Ajouter Produit</button>
+                        <button>Nouveau Paiement</button>
+                        <button>Suivre Expédition</button>
+                    </div>
+                </section>
+
+                <section class="charts">
+                    <canvas id="chartImportations"></canvas>
+                </section>
+                <div class="box">
+                    <h2><i class="fas fa-calendar-check"></i> Commandes – Décembre 2020 / Janvier 2021</h2>
+                    <table class="calendar" border="1">
+                        <tr>
+                            <th>Lu</th>
+                            <th>Ma</th>
+                            <th>Me</th>
+                            <th>Je</th>
+                            <th>Ve</th>
+                            <th>Sa</th>
+                            <th>Di</th>
+                        </tr>
+                        <tr>
+                            <td>30</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>6</td>
+                        </tr>
+                    </table>
+                    <p><i class="fas fa-dot-circle"></i> Commandes uniques : 121<br>
+                        <i class="fas fa-repeat"></i> Commandes permanentes : 18
+                    </p>
+                </div>
+
+                <div class="box">
+                    <h2><i class="fas fa-map-signs"></i> Itinéraires</h2>
+                    <p><strong>Actif :</strong> 0 unité, 0 m</p>
+                    <p><strong>Planifié :</strong> 1 unité, 9 commandes, 353.1 km</p>
+                    <p><strong>Effectué :</strong> 3 unités, 18 commandes, 26.5 km</p>
+                </div>
+
+                <div class="box">
+                    <h2><i class="fas fa-chart-pie"></i> Rapports</h2>
+                    <div class="stats">
+                        <div class="box"><strong>Total</strong><br>83</div>
+                        <div class="box"><strong>Exécutées</strong><br>65</div>
+                        <div class="box"><strong>Visitées</strong><br>65</div>
+                        <div class="box"><strong>Rejetées</strong><br>7</div>
+                    </div>
+                </div>
+
+                <div class="box ">
+                    <h2><i class="fas fa-users"></i> Discussion</h2>
+                    <ul class="chat">
+                        <li><i class="fas fa-user-circle"></i> Alexandre (m_livraison)</li>
+                        <li><i class="fas fa-car"></i> Champion (Mustang)</li>
+                        <li><i class="fas fa-car-side"></i> Clémentine (BMW 530d)</li>
+                        <li><i class="fas fa-car"></i> Grégoire (Alfa Romeo)</li>
+                        <li><i class="fas fa-bolt"></i> Éclair (Renault_Kaptur)</li>
+                        <li><i class="fas fa-bus"></i> Natalia (Bus 32 Miami)</li>
+                        <li><i class="fas fa-truck"></i> Pierre (logistique_un)</li>
+                        <li><i class="fas fa-car-alt"></i> Valentin (Honda Civic 6519)</li>
+                    </ul>
+                </div>
+
+    </div>
+
+    <script src="script.js" defer></script>
+    <script>
+        lucide.createIcons();
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleBtn = document.getElementById("toggleSidebar");
+            const sidebar = document.getElementById("sidebar");
+
+            toggleBtn.addEventListener("click", function () {
+                sidebar.classList.toggle("hidden");
+            });
+        });
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('clock').textContent = timeString;
+        }
+
+        // Mettre à jour toutes les secondes
+        setInterval(updateClock, 1000);
+        updateClock(); // Appel initial
+    </script>
+</body>
+<footer>
+    <div class="footer">
+        &copy; 2025 ImportFlow. Tous droits réservés.
+    </div>
+</footer>
+
+</html>

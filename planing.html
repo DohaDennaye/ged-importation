@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Ordres de Livraison</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary: #1e88e5;
+            --danger: #e53935;
+            --light: #f4f4f4;
+            --text: #333;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: #1e88e5;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: clamp(1.2rem, 2vw, 2rem);
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .toolbar button,
+        .toolbar input {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .toolbar button {
+            background: white;
+            color: #1e88e5;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .toolbar input {
+            border: 1px solid #ccc;
+        }
+
+        .toolbar button:hover {
+            background: #e3f2fd;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-bottom: 20px;
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        th {
+            background-color: #eeeeee;
+        }
+
+        .btn-delete {
+            background: #e53935;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .bottom-section {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-box,
+        .map-box {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+        }
+
+        #map {
+            height: 200px;
+            border-radius: 6px;
+        }
+
+        /* ✅ Responsive design */
+        @media (max-width: 768px) {
+            .bottom-section {
+                flex-direction: column;
+            }
+
+            .toolbar {
+                display: none;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+                background: #fff;
+                padding: 10px;
+                position: absolute;
+                top: 70px;
+                right: 20px;
+                border-radius: 6px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .toolbar.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .orders-table {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+        }
+
+        th,
+        td {
+            min-width: 10px;
+        }
+
+        .info-box,
+        .map-box {
+            padding: 1rem;
+        }
+
+        header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .container {
+            padding: 1rem;
+        }
+
+        .toolbar button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        main {
+            flex: 1;
+            background-color: #ECEFF1;
+            padding: 10px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar td {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .chat li {
+            list-style: none;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stats .box {
+            padding: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .pagination {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .pagination button {
+            margin: 0 5px;
+            padding: 6px 12px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Responsive : sur tablette, 2 colonnes */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>Tableau des Ordres</h2>
+        <button class="menu-toggle" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+        <div class="toolbar">
+            <button><i data-lucide="filter"></i> Filtrer</button>
+            <button><i data-lucide="search"></i> Rechercher</button>
+            <button><i data-lucide="settings"></i> Paramètres</button>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <table id="orders-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Adresse</th>
+                    <th>Coût</th>
+                    <th>Poids</th>
+                    <th>Volume</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Client A</td>
+                    <td>avenue annakhil, Rabat</td>
+                    <td>120 €</td>
+                    <td>15 kg</td>
+                    <td>0.8 m³</td>
+                    <td><button class="btn-delete">Supprimer</button></td>
+                </tr>
+                <tr>
+                    <td>Client B</td>
+                    <td>avenue hassan ii, Rabat</td>
+                    <td>85 €</td>
+                    <td>8 kg</td>
+                    <td>0.5 m³</td>
+                    <td><button class="btn-delete">Supprimer</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+        </div>
+
+
+        <div class="bottom-section">
+            <div class="info-box" id="info-box" aria-live="polite">
+                <h3>Détails de l'ordre</h3>
+                <p><strong>Nom :</strong> -</p>
+                <p><strong>Adresse :</strong> -</p>
+                <p><strong>Coût :</strong> -</p>
+                <p><strong>Poids :</strong> -</p>
+                <p><strong>Volume :</strong> -</p>
+            </div>
+
+            <div class="map-box">
+                <h3>Carte interactive</h3>
+                <div id="map" aria-label="Carte interactive des ordres"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        lucide.createIcons();
+
+        const map = L.map("map").setView([46.5, 2.5], 6);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        }).addTo(map);
+
+        let currentMarker = null;
+        let selectedRow = null;
+
+        const infoBox = document.getElementById("info-box");
+
+        async function geocodeAddress(address) {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+            const response = await fetch(url, {
+                headers: {
+                    "Accept-Language": "fr",
+                    "User-Agent": "OrdresDeLivraisonApp/1.0 (contact@exemple.com)",
+                },
+            });
+            const data = await response.json();
+            return data.length > 0 ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : null;
+        }
+
+        function clearDetails() {
+            infoBox.innerHTML = `
+    <h3>Détails de l'ordre</h3>
+    <p><strong>Nom :</strong> -</p>
+    <p><strong>Adresse :</strong> -</p>
+    <p><strong>Coût :</strong> -</p>
+    <p><strong>Poids :</strong> -</p>
+    <p><strong>Volume :</strong> -</p>
+  `;
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+                currentMarker = null;
+            }
+            map.setView([46.5, 2.5], 6);
+        }
+        // 🟢 Gère le bouton menu responsive
+        function toggleMenu() {
+            document.querySelector(".toolbar").classList.toggle("active");
+        }
+        const orders = [
+            { nom: "Client A", adresse: "avenue annakhil, Rabat", cout: 120, poids: 15, volume: 0.8, lat: 48.8566, lon: 2.3522 },
+            { nom: "Client B", adresse: "Avenue hassan ii, Rabat", cout: 85, poids: 8, volume: 0.5, lat: 43.6047, lon: 1.4442 },
+            { nom: "Client C", adresse: "Rue de Zenata, Casablanca", cout: 98, poids: 10, volume: 0.6, lat: 45.764, lon: 4.8357 },
+        ];
+        const tbody = document.querySelector("#orders-table tbody");
+
+        function renderTable(data) {
+            tbody.innerHTML = ""; // vide le tableau
+
+            data.forEach(order => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+      <td>${order.nom}</td>
+      <td>${order.adresse}</td>
+      <td>${order.cout} €</td>
+      <td>${order.poids} kg</td>
+      <td>${order.volume} m³</td>
+      <td><button class="btn-delete">Supprimer</button></td>
+    `;
+
+                row.addEventListener("click", async (e) => {
+                    if (e.target.classList.contains("btn-delete")) return; // ignore si bouton supprimer
+
+                    selectedRow = row;
+
+                    infoBox.innerHTML = `
+        <h3>Détails de l'ordre</h3>
+        <p><strong>Nom :</strong> ${order.nom}</p>
+        <p><strong>Adresse :</strong> ${order.adresse}</p>
+        <p><strong>Coût :</strong> ${order.cout} €</p>
+        <p><strong>Poids :</strong> ${order.poids} kg</p>
+        <p><strong>Volume :</strong> ${order.volume} m³</p>
+        <button id="btn-delete-info" class="btn-delete">Supprimer cet ordre</button>
+      `;
+
+                    document.getElementById("btn-delete-info").onclick = () => {
+                        // Supprime la ligne et nettoie
+                        const idx = orders.findIndex(o => o.nom === order.nom && o.adresse === order.adresse);
+                        if (idx !== -1) orders.splice(idx, 1);
+                        renderTable(orders);
+                        clearDetails();
+                    };
+
+                    const coords = await geocodeAddress(order.adresse);
+                    if (coords) {
+                        if (currentMarker) map.removeLayer(currentMarker);
+                        currentMarker = L.marker(coords).addTo(map).bindPopup(`${order.nom}<br>${order.adresse}`).openPopup();
+                        map.setView(coords, 13);
+                    } else {
+                        alert("Adresse introuvable.");
+                        clearDetails();
+                    }
+                });
+
+                row.querySelector(".btn-delete").onclick = (e) => {
+                    e.stopPropagation();
+                    const idx = orders.findIndex(o => o.nom === order.nom && o.adresse === order.adresse);
+                    if (idx !== -1) orders.splice(idx, 1);
+                    renderTable(orders);
+                    if (selectedRow === row) clearDetails();
+                };
+
+                tbody.appendChild(row);
+            });
+        }
+        window.onload = () => {
+            renderTable(orders);
+        };
+
+    </script>
+</body>
+
+</html>
